@@ -1,4 +1,7 @@
-[![Build Status](https://travis-ci.org/alyssafrazee/polyester.svg?branch=master)](https://travis-ci.org/alyssafrazee/polyester)
+# NOTE
+
+Fork of alyssafrazee/polyester so I can play about with estimation of exact read numbers in simulate_experiment, rather than have NB() do it for me
+
 
 # Introduction
 

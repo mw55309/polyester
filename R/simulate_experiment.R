@@ -317,7 +317,7 @@
 #'
 simulate_experiment = function(fasta=NULL, gtf=NULL, seqpath=NULL,
     outdir='.', num_reps=c(10,10), reads_per_transcript=300, size=NULL,
-    fold_changes, paired=TRUE, reportCoverage=FALSE, ...){
+    fold_changes, paired=TRUE, reportCoverage=FALSE, exact=FALSE, ...){
 
     extras = list(...)
 
@@ -385,10 +385,18 @@ simulate_experiment = function(fasta=NULL, gtf=NULL, seqpath=NULL,
     }
     group_ids = rep(1:length(num_reps), times=num_reps)
     numreadsList = vector("list", sum(num_reps))
-    numreadsList = lapply(1:sum(num_reps), function(i){
-        group_id = group_ids[i]
-        NB(as.matrix(basemeans)[,group_id], as.matrix(size)[,group_id])
-    })
+    
+    if (exact) {
+        # create exact read numbers
+        numreadsList = lapply(1:sum(num_reps), function(i){
+                         group_id = group_ids[i]
+                         as.matrix(basemeans)[,group_id]})    
+    } else {
+        # use negative binomial to calculate read numbers
+        numreadsList = lapply(1:sum(num_reps), function(i){
+                        group_id = group_ids[i]
+                        NB(as.matrix(basemeans)[,group_id], as.matrix(size)[,group_id])})
+    }
     readmat = matrix(unlist(numreadsList), ncol=sum(num_reps))
     readmat = t(extras$lib_sizes * t(readmat))
     if('gcbias' %in% names(extras)){
